@@ -1,5 +1,5 @@
 using UnityEngine;
-
+[RequireComponent(typeof(Rigidbody))]
 public class EnemyChasePhysics : MonoBehaviour
 {
     public Transform target;
@@ -9,11 +9,11 @@ public class EnemyChasePhysics : MonoBehaviour
     public float maxSpeed = 10f;
 
 
-    private Rigidbody rd;
+    private Rigidbody rb;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-    //   rd = GetComponent();
+        rb = GetComponent<Rigidbody>(); 
     }
 
     // Update is called once per frame
@@ -27,7 +27,15 @@ public class EnemyChasePhysics : MonoBehaviour
         direction = direction.normalized;
 
 
+        //力を加えて追いかける
+        rb.AddForce(direction * speed);
+
+
         //最大速度を制限
-       // if(rd.angularVelocity = rb)
+        //if(rb.velocity.magnitude > maxSpeed)
+        {
+          //  rb.velocity = rb.velocity.normalized * maxSpeed;
+        }
+        
     }
 }
