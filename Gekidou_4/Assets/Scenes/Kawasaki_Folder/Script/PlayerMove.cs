@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class PlayerMove : MonoBehaviour
 {
     public float speed = 0.5f;
     public float blinkDistance = 5.0f;
-    
+    public float blinkDuration = 0.1f;
+    private bool isBlinking = false;
     // Update is called once per frame
     void Update()
     {
@@ -41,12 +43,30 @@ public class PlayerMove : MonoBehaviour
 
         // 右クリックするとブリンク
         // 右クリックを検出
-        if(Mouse.current.rightButton.wasPressedThisFrame)
-        {   // 移動キーを押しているとブリンク出来るよ！
-            if (move != Vector2.zero)
-            {
-                transform.position += (Vector3)(move * blinkDistance);
-            }
+        if(Mouse.current.rightButton.wasPressedThisFrame && move != Vector2.zero && !isBlinking)
+        {
+            StartCoroutine(Blink(move));
         }
+
+        IEnumerator Blink(Vector2 dir)
+        {
+            isBlinking = true;
+
+            Vector3 start = transform.position;
+            Vector3 end = start + (Vector3)(dir * blinkDistance);
+
+            float time = 0f;
+            while (time < blinkDuration)
+            {
+                transform.position = Vector3.Lerp(start, end, time / blinkDuration);
+                time += Time.deltaTime;
+                yield return null;
+            }
+
+            transform.position = end;
+
+            isBlinking = false;
+        }
+       
     }
 }
