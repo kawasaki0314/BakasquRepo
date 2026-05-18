@@ -5,8 +5,14 @@ using System.Collections;
 public class PlayerMove : MonoBehaviour
 {
     public float speed = 0.5f;
-    public float blinkDistance = 5.0f;
-    public float blinkDuration = 0.1f;
+    // ブリンクの距離と時間
+    public float blinkDistance =7.5f;
+    public float blinkDuration = 0.3f;
+
+    [Header("Blink Cooldown")]
+    public float blinkCooldown = 3.0f; // ブリンクのクールダウン時間
+    private float cooldownTimer = 0f;  // ブリンクのクールダウンタイマー
+
     private bool isBlinking = false;
     // Update is called once per frame
     void Update()
@@ -15,6 +21,14 @@ public class PlayerMove : MonoBehaviour
 
         // エラーを防ぐため
         if (Keyboard.current == null) return;
+        // ブリンク中は移動を無効化
+        if (isBlinking) return;
+
+        // クールダウンタイマーのカウントダウン
+        if (cooldownTimer > 0)
+        {
+            cooldownTimer -= Time.deltaTime;
+        }
 
         // Aを押すと左移動,左を向く
         if (Keyboard.current.aKey.isPressed)
@@ -39,11 +53,18 @@ public class PlayerMove : MonoBehaviour
             move.y -= 1;
         }
 
+        // 斜め移動でも速度を同じにするやつ
+        if (move != Vector2.zero)
+        {
+            move.Normalize();
+        }
+
         transform.position += (Vector3)(move * speed * Time.deltaTime);
 
         // 右クリックするとブリンク
-        // 右クリックを検出
-        if(Mouse.current.rightButton.wasPressedThisFrame && move != Vector2.zero && !isBlinking)
+        // 右クリックを検出&移動入力がある&ブリンク中でない&クールダウンが終わっている
+        if (Mouse.current.rightButton.wasPressedThisFrame && move != 
+            Vector2.zero && !isBlinking && cooldownTimer <= 0f)
         {
             StartCoroutine(Blink(move));
         }
@@ -52,11 +73,14 @@ public class PlayerMove : MonoBehaviour
         {
             isBlinking = true;
 
+            // ブリンク開始時にクールダウンタイマーを設定
+            cooldownTimer = blinkCooldown;
             Vector3 start = transform.position;
             Vector3 end = start + (Vector3)(dir * blinkDistance);
 
             float time = 0f;
             while (time < blinkDuration)
+
             {
                 transform.position = Vector3.Lerp(start, end, time / blinkDuration);
                 time += Time.deltaTime;
