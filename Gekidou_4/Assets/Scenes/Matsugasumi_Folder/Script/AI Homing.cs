@@ -1,9 +1,7 @@
 using UnityEngine;
-using Unity.VisualScripting;
-
 public class AIHoming : MonoBehaviour
 {
-    /*
+   
     Transform playerTr;//プレイヤーのTransform
 
     [SerializeField] float speed = 2f;  //敵の動くスピード
@@ -17,19 +15,18 @@ public class AIHoming : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //プレイヤーのtransformを取得(プレイヤーのタグをplayerに設定必要)
-        playerTr = GameObject.FindGameObjectWithTag("Player").transform;
+        //1. 最初は「GameObject playerObj」と書いて、箱(変数)を用意してプレイヤーを探す
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
 
-        if (playerObj != null)
+        //2. 小文字の「playerObj」がちゃんと見つかったか確認
+        if(playerObj != null)
         {
             playerTr = playerObj.transform;
         }
         else
         {
-            Debug.LogError("タグ'player'が見つかりません。インスペクターで設定を確認してください。");
+            Debug.LogError("タグ'Player'が見つかりません。インスペクターで設定を確認してください。");
         }
-        //HPの初期化
-        currentHP = maxHP;
     }
 
     // Update is called once per frame
@@ -88,5 +85,5 @@ public class AIHoming : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    */
+   
 }
